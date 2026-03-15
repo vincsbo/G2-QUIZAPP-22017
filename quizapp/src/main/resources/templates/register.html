@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - Math Quiz</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <style>
+        .error { color: #f44336; margin-bottom: 10px; }
+        .success { color: #4CAF50; margin-bottom: 10px; }
+        .password-container {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+        /* Center register form without sidebar */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .register-box {
+            background: white;
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 400px;
+        }
+        .register-box h1 {
+            color: #1a237e;
+            margin-bottom: 30px;
+        }
+        .register-box input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .register-box button {
+            width: 100%;
+            padding: 15px;
+            margin: 20px 0;
+            background: #1a237e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .register-box button:hover {
+            background: #283593;
+        }
+        .password-rules {
+            text-align: left;
+            margin: 15px 0;
+            font-size: 14px;
+            color: #666;
+        }
+        .password-rules ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-box">
+        <h1>🧮 Math Quiz<br>Register</h1>
+        
+        <div th:if="${error}" class="error" th:text="${error}"></div>
+        <div th:if="${success}" class="success" th:text="${success}"></div>
+        
+        <form th:action="@{/register}" method="post">
+            <input type="text" name="username" placeholder="Username" required>
+            
+            <div class="password-container">
+                <input type="password" name="password" id="password" placeholder="Password" required>
+                <span class="toggle-password" onclick="togglePassword('password')">👁️</span>
+            </div>
+            
+            <div class="password-container">
+                <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password" required>
+                <span class="toggle-password" onclick="togglePassword('confirmPassword')">👁️</span>
+            </div>
+            
+            <div class="password-rules">
+                Password must contain:
+                <ul>
+                    <li>Minimum 8 characters</li>
+                    <li>At least 1 uppercase letter</li>
+                    <li>At least 1 number</li>
+                </ul>
+            </div>
+            
+            <button type="submit">Register</button>
+        </form>
+        
+        <p>Already have an account? <a th:href="@{/}">Login</a></p>
+    </div>
+
+    <script>
+        function togglePassword(fieldId) {
+            const passwordInput = document.getElementById(fieldId);
+            passwordInput.type = (passwordInput.type === 'password') ? 'text' : 'password';
+        }
+    </script>
+</body>
+</html>

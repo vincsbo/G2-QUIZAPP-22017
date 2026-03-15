@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Math Quiz</h2>
+        <a th:href="@{/dashboard}">Dashboard</a>  <!-- FIXED: was href="/dashboard" -->
+        <a th:href="@{/profile}">Profile</a>
+        <a th:href="@{/statistics}">Statistics</a>
+        <a th:href="@{/logout}">Logout</a>
+    </div>
+
+    <div class="main">
+        <div class="container">
+    <div class="welcome">
+        <h1>User Profile</h1>
+        <p>Welcome back, <span th:text="${username}" style="font-weight: bold; color: #1a237e;">User</span>!</p>
+    </div>
+
+    <div class="stats-container">
+        <div class="stat-card">
+            <span class="stat-label">Total Games</span>
+            <span class="stat-value" th:text="${totalGames} ?: 0">0</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Best Score</span>
+            <span class="stat-value" style="color: #fbc02d;" th:text="(${bestScore} ?: 0) + '/10'">0/10</span>
+        </div>
+    </div>
+
+    <div style="margin-top: 40px; text-align: center;">
+        <a th:href="@{/dashboard}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+</div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Math Quiz</h2>
+        <a th:href="@{/dashboard}">Dashboard</a>
+        <a th:href="@{/profile}">Profile</a>
+        <a th:href="@{/statistics}">Statistics</a>
+        <a th:href="@{/logout}">Logout</a>
+    </div>
+
+    <div class="main">
+        <div class="container">
+            <div class="stats">
+                <div class="stat">Time<br><span class="stat-num" id="timer">60</span></div>
+                <div class="stat">Correct<br><span class="stat-num" id="correct">0</span></div>
+                <div class="stat">Wrong<br><span class="stat-num" id="wrong">0</span></div>
+                <div class="stat">Accuracy<br><span class="stat-num" id="accuracy">0%</span></div>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 20px; color: #2196F3;">
+                Question <span id="current-q">1</span> of <span id="total-q">10</span>
+            </div>
+
+            <form th:action="@{/quiz/submit}" method="post" id="quizForm">
+                <input type="hidden" name="difficulty" th:value="${difficulty}">
+                
+                <div th:each="q, i : ${questions}" 
+                     class="question-box" 
+                     th:style="${i.index == 0} ? 'display:block' : 'display:none'"
+                     th:id="'q' + ${i.index}"
+                     th:data-answer="${q.answer}">
+                    
+                    <div class="question" th:text="${q.question}">1 + 1 = ?</div>
+                    
+                    <div class="options">
+                        <button type="button" class="option" th:data-idx="${i.index}" th:data-letter="A" th:data-value="${q.optionA}">A. <span th:text="${q.optionA}">2</span></button>
+                        <button type="button" class="option" th:data-idx="${i.index}" th:data-letter="B" th:data-value="${q.optionB}">B. <span th:text="${q.optionB}">3</span></button>
+                        <button type="button" class="option" th:data-idx="${i.index}" th:data-letter="C" th:data-value="${q.optionC}">C. <span th:text="${q.optionC}">4</span></button>
+                        <button type="button" class="option" th:data-idx="${i.index}" th:data-letter="D" th:data-value="${q.optionD}">D. <span th:text="${q.optionD}">5</span></button>
+                    </div>
+                    
+                    <input type="hidden" th:name="'answer_' + ${i.index}" th:id="'ans' + ${i.index}">
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button type="submit" class="btn btn-primary" id="finishBtn" style="display:none;">Finish Quiz</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const timePerQuestion = /*[[${difficulty == 'hard' ? 20 : difficulty == 'medium' ? 40 : 60}]]*/ 60;
+        let time = timePerQuestion;
+        let correctCount = 0;
+        let wrongCount = 0;
+        let answeredCount = 0;
+        let currentQ = 0;
+        const totalQ = 10;
+        let timerInterval;
+        let answeredQuestions = new Set();
+        
+        // Initialize
+        document.getElementById('timer').textContent = time;
+        document.getElementById('total-q').textContent = totalQ;
+        startTimer();
+        
+        // Add click listeners to all options
+        document.querySelectorAll('.option').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const qIdx = parseInt(this.getAttribute('data-idx'));
+                const letter = this.getAttribute('data-letter');
+                selectAnswer(qIdx, letter);
+            });
+        });
+        
+        function startTimer() {
+            clearInterval(timerInterval);
+            time = timePerQuestion;
+            document.getElementById('timer').textContent = time;
+            
+            timerInterval = setInterval(() => {
+                time--;
+                document.getElementById('timer').textContent = time;
+                
+                if (time <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeout();
+                }
+            }, 1000);
+        }
+        
+        function handleTimeout() {
+            if (answeredQuestions.has(currentQ)) return;
+            
+            const box = document.getElementById('q' + currentQ);
+            const correctLetter = box.getAttribute('data-answer');
+            const input = document.getElementById('ans' + currentQ);
+            
+            input.value = 'TIMEOUT';
+            wrongCount++;
+            answeredCount++;
+            answeredQuestions.add(currentQ);
+            
+            const btns = box.querySelectorAll('.option');
+            btns.forEach((btn, idx) => {
+                const optLetter = String.fromCharCode(65 + idx);
+                btn.disabled = true;
+                if (optLetter === correctLetter) {
+                    btn.style.background = '#4CAF50';
+                    btn.style.color = 'white';
+                } else {
+                    btn.style.opacity = '0.5';
+                }
+            });
+            
+            updateStats();
+            setTimeout(() => nextQuestion(), 1500);
+        }
+        
+        function selectAnswer(qIdx, letter) {
+            if (answeredQuestions.has(qIdx)) return;
+            answeredQuestions.add(qIdx);
+            
+            clearInterval(timerInterval);
+            
+            const box = document.getElementById('q' + qIdx);
+            const correctLetter = box.getAttribute('data-answer');
+            const input = document.getElementById('ans' + qIdx);
+            
+            input.value = letter;
+            
+            const btns = box.querySelectorAll('.option');
+            
+            btns.forEach((btn, idx) => {
+                const optLetter = String.fromCharCode(65 + idx);
+                btn.disabled = true;
+                
+                if (optLetter === correctLetter) {
+                    btn.style.background = '#4CAF50';
+                    btn.style.color = 'white';
+                    btn.style.borderColor = '#4CAF50';
+                } else if (optLetter === letter && letter !== correctLetter) {
+                    btn.style.background = '#f44336';
+                    btn.style.color = 'white';
+                    btn.style.borderColor = '#f44336';
+                } else {
+                    btn.style.opacity = '0.3';
+                }
+            });
+            
+            if (letter === correctLetter) {
+                correctCount++;
+            } else {
+                wrongCount++;
+            }
+            answeredCount++;
+            
+            updateStats();
+            setTimeout(() => nextQuestion(), 1000);
+        }
+        
+        function updateStats() {
+            document.getElementById('correct').textContent = correctCount;
+            document.getElementById('wrong').textContent = wrongCount;
+            const accuracy = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+        }
+        
+        function nextQuestion() {
+            document.getElementById('q' + currentQ).style.display = 'none';
+            currentQ++;
+            
+            if (currentQ < totalQ) {
+                document.getElementById('q' + currentQ).style.display = 'block';
+                document.getElementById('current-q').textContent = currentQ + 1;
+                startTimer();
+            } else {
+                document.getElementById('finishBtn').style.display = 'inline-block';
+                setTimeout(() => {
+                    document.getElementById('quizForm').submit();
+                }, 500);
+            }
+        }
+        /*]]>*/
+    </script>
+</body>
+</html>

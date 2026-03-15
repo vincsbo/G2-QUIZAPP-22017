@@ -1,0 +1,5 @@
+mathquiz\quizapp\MathService.class
+mathquiz\quizapp\QuizappApplication.class
+mathquiz\quizapp\ScoreRepository.class
+mathquiz\quizapp\QuizController.class
+mathquiz\quizapp\Score.class

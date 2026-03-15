@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Math Quiz</h2>
+        <a th:href="@{/dashboard}">Dashboard</a>
+        <a th:href="@{/profile}">Profile</a>
+        <a th:href="@{/statistics}">Statistics</a>
+        <a th:href="@{/logout}">Logout</a>
+    </div>
+
+    <div class="main">
+        <div class="container">
+            <div class="welcome">
+                <h1>Welcome <span th:text="${username}">User</span></h1>
+                <p>Select Difficulty</p>
+            </div>
+
+            <div class="difficulty-buttons">
+                <a th:href="@{/quiz(difficulty=easy)}" class="btn btn-easy">Easy</a>
+                <a th:href="@{/quiz(difficulty=medium)}" class="btn btn-medium">Medium</a>
+                <a th:href="@{/quiz(difficulty=hard)}" class="btn btn-hard">Hard</a>
+            </div>
+
+            <h2>Leaderboard</h2>
+            <table class="leaderboard">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="score, i : ${topScores}">
+                        <td th:text="${i.index + 1}">1</td>
+                        <td th:text="${score.username}">Player</td>
+                        <td th:text="${score.scoreValue} + '/10'">10/10</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

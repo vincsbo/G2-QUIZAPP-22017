@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz Summary</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+
+<body>
+
+<div class="sidebar">
+    <h2>Math Quiz</h2>
+    <a th:href="@{/dashboard}">Dashboard</a>
+    <a th:href="@{/profile}">Profile</a>
+    <a th:href="@{/statistics}">Statistics</a>
+    <a th:href="@{/logout}">Logout</a>
+</div>
+
+<div class="main">
+    <div class="container"> <div class="welcome">
+            <h1>Quiz Complete!</h1>
+        </div>
+
+        <h2 style="text-align:center; margin-bottom:20px; font-size: 2.5rem; color: #1a237e;" 
+            th:text="${score} + '/10'">0/10</h2>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <span class="stat-label">Correct</span>
+                <span class="stat-value val-correct" th:text="${correct}">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Wrong</span>
+                <span class="stat-value val-wrong" th:text="${wrong}">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Accuracy</span>
+                <span class="stat-value" th:text="${accuracy} + '%'">0%</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Difficulty</span>
+                <span class="stat-value" style="text-transform: capitalize;" th:text="${difficulty}">Easy</span>
+            </div>
+        </div>
+
+        <h2 style="margin-top:40px;">Leaderboard</h2>
+<table class="leaderboard">
+    <thead>
+        <tr>
+            <th>Player</th>
+            <th>Score</th>
+            <th>Difficulty</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="s : ${topScores}">
+            <td th:text="${s.username}">Name</td>
+            <td th:text="${s.scoreValue}">0</td>
+            <td th:text="${s.difficulty}" style="text-transform: capitalize;">Easy</td>
+        </tr>
+    </tbody>
+</table>
+
+        <div style="margin-top:40px; text-align: center;">
+            <a th:href="@{/dashboard}" class="btn btn-primary">Play Again</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+mathquiz\quizapp\UserService.class
+mathquiz\quizapp\UserRepository.class
+mathquiz\quizapp\MathService.class
+mathquiz\quizapp\QuizController.class
+mathquiz\quizapp\User.class
+mathquiz\quizapp\QuizappApplication.class
+mathquiz\quizapp\ScoreRepository.class
+mathquiz\quizapp\Score.class
